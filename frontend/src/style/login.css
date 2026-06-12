@@ -1,0 +1,126 @@
+/* Background */
+* {
+    box-sizing: border-box;
+}
+
+.login-page {
+    height: 100vh;
+    background: #eff6ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Card */
+.login-card {
+    width: 360px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.login-card form {
+    width: 100%;
+    text-align: left;
+}
+
+/* Brand (top-left like your UI) */
+.brand {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: #3b82f6;
+}
+
+/* Title */
+.login-title {
+    margin-bottom: 5px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Subtitle */
+.login-subtitle {
+    margin-bottom: 25px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Input */
+.login-input {
+    width: 100%;
+    display: block;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.login-input:focus {
+    border-color: #60a5fa;
+    outline: none;
+}
+
+/* Button */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.login-button:hover {
+    background: #2563eb;
+}
+
+.login-button:disabled {
+    background: #bfdbfe;
+    cursor: not-allowed;
+}
+
+/* Dashboard (after login) */
+.dashboard {
+    text-align: center;
+    margin-top: 100px;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Logout button */
+.logout-btn {
+    margin-top: 20px;
+    padding: 10px 16px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* Error border */
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+/* Error text */
+.error-text {
+    color: #ef4444;
+    font-size: 13px;
+    margin-bottom: 15px;
+    text-align: left;
+}
