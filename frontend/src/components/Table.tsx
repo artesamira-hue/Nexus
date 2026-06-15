@@ -7,14 +7,16 @@ type Column<T> = {
 type TableProps<T> = {
     columns: Column<T>[];
     data: T[];
+    scroll?: boolean;
 };
 
 const Table = <T extends Record<string, unknown>>({
     columns,
     data,
+    scroll,
 }: TableProps<T>) => {
     return (
-        <div style={{ overflowY: "auto", flex: 1 }}>
+        <div style={scroll ? { overflowY: "auto", flex: 1 } : undefined}>
             <table className="table">
                 <thead>
                     <tr>

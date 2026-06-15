@@ -1,32 +1,15 @@
-import { type AttendanceStatus } from "../constants/attendance";
-
-type Props = {
-    year?: number;
-    month?: number;
-    dayStatuses?: Record<number, AttendanceStatus>;
-    today?: number;
-};
-
-const DAY_HEADERS = ["M", "T", "W", "T", "F", "S", "S"];
-
-const MONTH_NAMES = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-];
-
-const STATUS_CLASS: Record<string, string> = {
-    present: "present",
-    absent: "absent",
-    leave: "leave",
-    "week off": "week-off",
-    holiday: "holiday",
-};
+import { type Props, DAY_HEADERS, MONTH_NAMES, STATUS_CLASS, LEGEND } from "../constants/calendar";
 
 const Calendar = ({
     year = 2026,
     month = 5,
     dayStatuses = {},
     today = 11,
+    onDayClick,
+    onPrevMonth,
+    onNextMonth,
+    canGoPrev = true,
+    canGoNext = true,
 }: Props) => {
     const firstDayOfWeek = new Date(year, month, 1).getDay();
     const startOffset = (firstDayOfWeek + 6) % 7;
@@ -45,21 +28,18 @@ const Calendar = ({
         return STATUS_CLASS[status.toLowerCase()] ?? "";
     };
 
-    const LEGEND = [
-        { cls: "present", label: "Present" },
-        { cls: "absent", label: "Absent" },
-        { cls: "leave", label: "Leave" },
-        { cls: "week-off", label: "Week Off" },
-        { cls: "holiday", label: "Holiday" },
-    ];
-
     return (
         <div className="calendar-wrapper">
             <div className="calendar-header">
-                <button className="calendar-nav-btn">‹</button>
+                {canGoPrev && (
+                    <button className="calendar-nav-btn" onClick={onPrevMonth}>‹</button>
+                )}
                 <span className="calendar-month-title">
                     {MONTH_NAMES[month]} {year}
                 </span>
+                {canGoNext && (
+                    <button className="calendar-nav-btn" onClick={onNextMonth}>›</button>
+                )}
             </div>
 
             <div className="calendar-grid">
@@ -75,10 +55,12 @@ const Calendar = ({
                     }
                     const cls = getDayClass(day);
                     const isToday = day === today;
+                    const isClickable = cls === "present";
                     return (
                         <div
                             key={day}
-                            className={`calendar-day${cls ? ` ${cls}` : ""}${isToday ? " today" : ""}`}
+                            className={`calendar-day${cls ? ` ${cls}` : ""}${isToday ? " today" : ""}${isClickable ? " clickable" : ""}`}
+                            onClick={isClickable ? () => onDayClick?.(day) : undefined}
                         >
                             <span className="day-number">{day}</span>
                             {cls && <span className="day-dot" />}

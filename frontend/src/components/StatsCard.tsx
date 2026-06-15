@@ -1,8 +1,10 @@
+import type { ReactNode } from "react";
+
 type Props = {
     title: string;
     value: string | number;
-    subtitle?: string;
-    color?: "blue" | "green" | "red" | "orange" | "purple";
+    subtitle?: ReactNode;
+    color?: "blue" | "green" | "red" | "orange" | "purple" | "dark";
 };
 
 const StatsCard = ({ title, value, subtitle, color = "blue" }: Props) => {

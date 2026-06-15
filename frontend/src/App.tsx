@@ -1,13 +1,15 @@
 import "./style/login.css";
 import { useEffect, useState } from "react";
 import { getProfile } from "./api/authApi";
-import { type User } from "./constants";
+import { type User, type Page } from "./constants";
 import Login from "./pages/Login";
 import AttendancePage from "./pages/AttendancePage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(() => localStorage.getItem("token") !== null);
+  const [activePage, setActivePage] = useState<Page>("dashboard");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -18,7 +20,9 @@ function App() {
 
     getProfile()
       .then((res) => {
-        setUser(res.data.user);
+        const fetchedUser: User = res.data.user;
+        setUser(fetchedUser);
+        setActivePage(fetchedUser.role === "management" ? "dashboard" : "attendance");
       })
       .catch(() => {
         localStorage.removeItem("token");
@@ -33,29 +37,24 @@ function App() {
     setUser(null);
   };
 
+  const handleLogin = (loggedInUser: User) => {
+    setActivePage(loggedInUser.role === "management" ? "dashboard" : "attendance");
+    setUser(loggedInUser);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
 
   if (!user) {
-    return <Login onLogin={setUser} />;
+    return <Login onLogin={handleLogin} />;
   }
 
-  // 👇 ROLE CHECK HERE
-  if (user.role === "employee") {
-    return <AttendancePage user={user} onLogout={handleLogout} />;
+  if (activePage === "attendance") {
+    return <AttendancePage user={user} onLogout={handleLogout} onNavigate={setActivePage} />;
   }
 
-  return (
-    <div className="dashboard">
-      <h2>Welcome {user.username} 👋</h2>
-      <h3>Role: {user.role}</h3>
-
-      <button className="logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
-    </div>
-  );
+  return <DashboardPage user={user} onLogout={handleLogout} onNavigate={setActivePage} />;
 }
 
 export default App;

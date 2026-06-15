@@ -14,4 +14,9 @@ export interface AttendanceRecord {
     workingHours: string;
     type: "WFH" | "WFO";
     status: AttendanceStatus;
+    nonWorkingHours?: string;
+    totalSession?: string;
+    officeLocation?: string;
+    systemTrackedLocation?: string;
+    lastUpdated?: string;
 }
