@@ -16,7 +16,7 @@ const Table = <T extends Record<string, unknown>>({
     scroll,
 }: TableProps<T>) => {
     return (
-        <div style={scroll ? { overflowY: "auto", flex: 1 } : undefined}>
+        <div className={scroll ? "table-container" : ""}>
             <table className="table">
                 <thead>
                     <tr>

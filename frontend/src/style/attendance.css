@@ -235,15 +235,37 @@ body {
     color: #9ca3af;
 }
 
-.card.blue h2   { color: #3b82f6; }
-.card.green h2  { color: #16a34a; }
-.card.red h2    { color: #dc2626; }
-.card.orange h2 { color: #f97316; }
-.card.purple h2 { color: #7c3aed; }
-.card.dark h2   { color: #111827; }
+.card.blue h2 {
+    color: #3b82f6;
+}
 
-.card .up   { color: #16a34a; }
-.card .down { color: #dc2626; }
+.card.green h2 {
+    color: #16a34a;
+}
+
+.card.red h2 {
+    color: #dc2626;
+}
+
+.card.orange h2 {
+    color: #f97316;
+}
+
+.card.purple h2 {
+    color: #7c3aed;
+}
+
+.card.dark h2 {
+    color: #111827;
+}
+
+.card .up {
+    color: #16a34a;
+}
+
+.card .down {
+    color: #dc2626;
+}
 
 /* ===== CONTENT ROW ===== */
 .content {
@@ -342,11 +364,30 @@ body {
     min-height: 50px;
 }
 
-.calendar-day.present  { background: #dcfce7; color: #15803d; }
-.calendar-day.absent   { background: #fee2e2; color: #b91c1c; }
-.calendar-day.leave    { background: #fef9c3; color: #a16207; }
-.calendar-day.week-off { background: #f1f5f9; color: #94a3b8; }
-.calendar-day.holiday  { background: #ede9fe; color: #6d28d9; }
+.calendar-day.present {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.calendar-day.absent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.calendar-day.leave {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.calendar-day.week-off {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.calendar-day.holiday {
+    background: #ede9fe;
+    color: #6d28d9;
+}
 
 .calendar-day.today {
     background: white !important;
@@ -366,12 +407,29 @@ body {
     border-radius: 50%;
 }
 
-.calendar-day.present  .day-dot { background: #22c55e; }
-.calendar-day.absent   .day-dot { background: #ef4444; }
-.calendar-day.leave    .day-dot { background: #f59e0b; }
-.calendar-day.week-off .day-dot { background: #94a3b8; }
-.calendar-day.holiday  .day-dot { background: #8b5cf6; }
-.calendar-day.today    .day-dot { background: #ef4444; }
+.calendar-day.present .day-dot {
+    background: #22c55e;
+}
+
+.calendar-day.absent .day-dot {
+    background: #ef4444;
+}
+
+.calendar-day.leave .day-dot {
+    background: #f59e0b;
+}
+
+.calendar-day.week-off .day-dot {
+    background: #94a3b8;
+}
+
+.calendar-day.holiday .day-dot {
+    background: #8b5cf6;
+}
+
+.calendar-day.today .day-dot {
+    background: #ef4444;
+}
 
 .calendar-legend {
     display: flex;
@@ -395,11 +453,30 @@ body {
     border: 1px solid transparent;
 }
 
-.legend-color.present  { background: #dcfce7; border-color: #86efac; }
-.legend-color.absent   { background: #fee2e2; border-color: #fca5a5; }
-.legend-color.leave    { background: #fef9c3; border-color: #fde047; }
-.legend-color.week-off { background: #f1f5f9; border-color: #cbd5e1; }
-.legend-color.holiday  { background: #ede9fe; border-color: #c4b5fd; }
+.legend-color.present {
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+.legend-color.absent {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.legend-color.leave {
+    background: #fef9c3;
+    border-color: #fde047;
+}
+
+.legend-color.week-off {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.legend-color.holiday {
+    background: #ede9fe;
+    border-color: #c4b5fd;
+}
 
 /* ===== TABLE ===== */
 .table-wrapper {
@@ -463,6 +540,11 @@ body {
     background: #eff6ff;
 }
 
+.table-container {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
 /* Type badge */
 .type-badge {
     display: inline-block;
@@ -488,9 +570,17 @@ body {
     font-size: 13px;
 }
 
-.status.present { color: #16a34a; }
-.status.absent  { color: #dc2626; }
-.status.leave   { color: #d97706; }
+.status.present {
+    color: #16a34a;
+}
+
+.status.absent {
+    color: #dc2626;
+}
+
+.status.leave {
+    color: #d97706;
+}
 
 /* ===== DAY DETAIL POPUP ===== */
 .popup-overlay {
