@@ -1,18 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { login, getProfile } from "../api/authApi";
-import { type User } from "../constants";
 import toast, { Toaster } from "react-hot-toast";
-
-type Props = {
-    onLogin: (user: User) => void;
-};
+import { useAuth } from "../context/AuthContext";
 
 type FormData = {
     username: string;
 };
 
-const Login: React.FC<Props> = ({ onLogin }) => {
+const Login: React.FC = () => {
+    const { handleLogin } = useAuth();
     const {
         register,
         handleSubmit,
@@ -29,7 +26,7 @@ const Login: React.FC<Props> = ({ onLogin }) => {
             localStorage.setItem("token", token);
 
             const profile = await getProfile();
-            onLogin(profile.data.user);
+            handleLogin(profile.data.user);
 
             toast.success("Login successful 🎉");
         } catch (err: unknown) {
@@ -45,7 +42,6 @@ const Login: React.FC<Props> = ({ onLogin }) => {
 
     return (
         <div className="login-page">
-            {/* ✅ Toast container (bottom-right) */}
             <Toaster position="bottom-right" reverseOrder={false} />
 
             <div className="login-card">

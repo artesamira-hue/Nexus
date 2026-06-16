@@ -1,27 +1,18 @@
 import "../style/attendance.css";
 import "../style/dashboard.css";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
     AreaChart, Area, BarChart, Bar,
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Legend,
 } from "recharts";
-import { type User, type Page, MONTH_OPTIONS, DEFAULT_MONTH } from "../constants";
-import { useLoading } from "../hooks/useLoading";
+import { MONTH_OPTIONS, DEFAULT_MONTH } from "../constants";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { setMonth, fetchDashboardData } from "../redux/slices/dashboardSlice";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import Table from "../components/Table";
-import {
-    getDashboardStats, getAttendanceTrend, getWfhWfoSplit, getDuBreakdown,
-    type DashboardStatCard, type AttendanceTrendPoint, type WfhWfoSplitPoint, type DuBreakdownRow,
-} from "../api/dashboardApi";
-
-type Props = {
-    user: User;
-    onLogout: () => void;
-    onNavigate: (page: Page) => void;
-};
 
 const attendanceColor = (pct: number) => {
     if (pct >= 85) return "";
@@ -29,44 +20,22 @@ const attendanceColor = (pct: number) => {
     return "danger";
 };
 
-const DashboardPage = ({ user, onLogout, onNavigate }: Props) => {
-    const [month, setMonth] = useState(DEFAULT_MONTH);
-    const [statsCards, setStatsCards] = useState<DashboardStatCard[]>([]);
-    const [attendanceTrend, setAttendanceTrend] = useState<AttendanceTrendPoint[]>([]);
-    const [wfhWfoSplit, setWfhWfoSplit] = useState<WfhWfoSplitPoint[]>([]);
-    const [duBreakdown, setDuBreakdown] = useState<DuBreakdownRow[]>([]);
-    const { loading, setLoading } = useLoading();
+const DashboardPage = () => {
+    const dispatch = useAppDispatch();
+    const { month, statsCards, attendanceTrend, wfhWfoSplit, duBreakdown, loading } =
+        useAppSelector((state) => state.dashboard);
 
     useEffect(() => {
-        const fetchAll = async () => {
-            setLoading(true);
-            try {
-                const [statsRes, trendRes, splitRes, duRes] = await Promise.all([
-                    getDashboardStats(month),
-                    getAttendanceTrend(month),
-                    getWfhWfoSplit(month),
-                    getDuBreakdown(month),
-                ]);
-                setStatsCards(statsRes.data);
-                setAttendanceTrend(trendRes.data);
-                setWfhWfoSplit(splitRes.data);
-                setDuBreakdown(duRes.data);
-            } catch (err) {
-                console.error("Failed to load dashboard data:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAll();
-    }, [month]);
+        dispatch(setMonth(DEFAULT_MONTH));
+        dispatch(fetchDashboardData(DEFAULT_MONTH));
+    }, [dispatch]);
 
     return (
         <div className="app-layout">
-            <Sidebar role={user.role} activePage="dashboard" onNavigate={onNavigate} />
+            <Sidebar />
 
             <div className="main-area">
-                <Header user={user} onLogout={onLogout} title="Executive Dashboard" />
+                <Header title="Executive Dashboard" />
 
                 <div className="page-content">
 
@@ -80,7 +49,11 @@ const DashboardPage = ({ user, onLogout, onNavigate }: Props) => {
                             <select
                                 className="dash-filter-select"
                                 value={month}
-                                onChange={(e) => setMonth(e.target.value)}
+                                onChange={(e) => {
+                                    const m = e.target.value;
+                                    dispatch(setMonth(m));
+                                    dispatch(fetchDashboardData(m));
+                                }}
                             >
                                 {MONTH_OPTIONS.map((m) => (
                                     <option key={m}>{m}</option>

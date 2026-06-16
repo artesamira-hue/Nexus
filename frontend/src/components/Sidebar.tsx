@@ -1,13 +1,8 @@
 import { useState } from "react";
-import { type Page } from "../constants";
+import { useAuth } from "../context/AuthContext";
 
-type Props = {
-    role: string;
-    activePage: Page;
-    onNavigate: (page: Page) => void;
-};
-
-const Sidebar = ({ role, activePage, onNavigate }: Props) => {
+const Sidebar = () => {
+    const { user, activePage, setActivePage } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
 
     return (
@@ -28,10 +23,10 @@ const Sidebar = ({ role, activePage, onNavigate }: Props) => {
             <div className="sidebar-section">
                 <p className="sidebar-section-label">OVERVIEW</p>
 
-                {role === "management" && (
+                {user!.role === "management" && (
                     <div
                         className={`sidebar-nav-item${activePage === "dashboard" ? " active" : ""}`}
-                        onClick={() => onNavigate("dashboard")}
+                        onClick={() => setActivePage("dashboard")}
                     >
                         <div className="nav-icon-wrap">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -47,7 +42,7 @@ const Sidebar = ({ role, activePage, onNavigate }: Props) => {
 
                 <div
                     className={`sidebar-nav-item${activePage === "attendance" ? " active" : ""}`}
-                    onClick={() => onNavigate("attendance")}
+                    onClick={() => setActivePage("attendance")}
                 >
                     <div className="nav-icon-wrap">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

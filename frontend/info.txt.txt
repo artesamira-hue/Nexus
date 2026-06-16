@@ -1,0 +1,46 @@
+Context API
+Think of it like a shared noticeboard that any component in the app can read from, without passing information through every level manually.
+In Nexus, once you log in, multiple components need to know who you are — the Header shows your name, the Sidebar shows the right menu items, and the App decides which page to render. Without Context, you'd have to pass user as a prop from App → Page → Header → Sidebar, which gets messy.
+Instead, AuthContext holds user, activePage, handleLogin, and handleLogout in one place. Any component just calls useAuth() and gets what it needs directly — no prop drilling.
+Rule of thumb: Context is great for data that rarely changes (who you are, are you logged in).
+
+Redux Toolkit
+Think of it like a central database for your UI. Instead of each page fetching and storing its own data locally, Redux holds it globally so it's predictable, trackable, and shareable.
+In Nexus, the Dashboard and Attendance pages each hit multiple API endpoints and manage loading states. Redux Toolkit's createSlice bundles the data + loading flag into one clean state object, and createAsyncThunk handles the API call — automatically setting loading: true when it starts and loading: false when it finishes.
+When you change the month filter, a Redux action updates the month in the store, and the new data gets fetched and stored — all in one place.
+Rule of thumb: Redux is great for server-fetched data that has loading states and complex updates.
+
+-----------------------------------------------------------------
+What is a JWT?
+A JWT (JSON Web Token) is a small, signed string that proves "this user is logged in." It looks like: xxxxx.yyyyy.zzzzz — three parts separated by dots.
+
+How it works in this project
+1. Login (backend — server.js)
+* User sends their username to POST /login
+* Server finds the user, then calls jwt.sign (user, "mysecretkey", { expiresIn: "1h" })
+* This packages { username, role } into a signed token and sends it back
+* Token expires in 1 hour
+
+2. Store the token (frontend — Login.tsx)
+* After login, the token is saved to localStorage.setItem("token", token)
+* It stays there until the user logs out
+
+3. Send token with every request (frontend — src/api/api.ts)
+* An axios interceptor automatically grabs the token from localStorage and adds it to every API call as a header: Authorization: Bearer <token>
+* You don't have to manually add it anywhere — it's automatic
+
+4. Verify token on the server (backend — server.js)
+* Every protected route (dashboard, attendance, profile) runs through verifyToken middleware first
+* It reads the Authorization header, calls jwt.verify(token, "mysecretkey"), and either:
+* Valid: attaches the decoded user to req.user and continues
+* Invalid/missing: returns 403 Forbidden
+
+5. Auth state in the app (frontend — src/context/AuthContext.tsx)
+* On app startup, the context checks if a token exists in localStorage and calls GET /profile to validate it
+* If valid, the user is considered logged in; if not, they're redirected to login
+* Logout removes the token from localStorage and clears the user state
+
+Flow in one line
+Login → get token → store in localStorage → attach to every request → backend verifies → access granted
+
+One thing to note: The secret key is hardcoded as "mysecretkey" in the backend. In production, this should be moved to an environment variable (.env) so it's not exposed in the code.

@@ -1,15 +1,15 @@
 import "../style/attendance.css";
 import { useState, useEffect } from "react";
 import { type AttendanceRecord, type AttendanceStatus } from "../constants/attendance";
-import { type User, type Page, CURRENT_YEAR, CURRENT_MONTH, TODAY, MONTH_OPTIONS, DEFAULT_MONTH } from "../constants";
-import { useLoading } from "../hooks/useLoading";
+import { CURRENT_YEAR, CURRENT_MONTH, TODAY, MONTH_OPTIONS, DEFAULT_MONTH } from "../constants";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { setSelectedMonth, fetchAttendanceData } from "../redux/slices/attendanceSlice";
 import StatsCard from "../components/StatsCard";
 import Calendar from "../components/Calendar";
 import Table from "../components/Table";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import DayDetailPopup from "../components/DayDetailPopup";
-import { getAttendanceRecords, getAttendanceSummary, type AttendanceSummary } from "../api/attendanceApi";
 
 function parseMonthStr(s: string) {
     const [mon, yr] = s.split(" ");
@@ -18,12 +18,6 @@ function parseMonthStr(s: string) {
         monthIndex: new Date(`${mon} 1 ${yr}`).getMonth(),
     };
 }
-
-type Props = {
-    user: User;
-    onLogout: () => void;
-    onNavigate: (page: Page) => void;
-};
 
 const attendanceColumns = [
     { header: "Date", accessor: "date" },
@@ -54,12 +48,10 @@ const attendanceColumns = [
     render?: (value: unknown, row: AttendanceRecord) => React.ReactNode;
 }[];
 
-const AttendancePage = ({ user, onLogout, onNavigate }: Props) => {
-    const [selectedMonth, setSelectedMonth] = useState(DEFAULT_MONTH);
+const AttendancePage = () => {
+    const dispatch = useAppDispatch();
+    const { selectedMonth, records, summary, loading } = useAppSelector((state) => state.attendance);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
-    const [records, setRecords] = useState<AttendanceRecord[]>([]);
-    const [summary, setSummary] = useState<AttendanceSummary | null>(null);
-    const { loading, setLoading } = useLoading();
 
     const { year: calYear, monthIndex: calMonth } = parseMonthStr(selectedMonth);
     const calToday = calYear === CURRENT_YEAR && calMonth === CURRENT_MONTH ? TODAY : -1;
@@ -67,29 +59,28 @@ const AttendancePage = ({ user, onLogout, onNavigate }: Props) => {
     const currentMonthIdx = MONTH_OPTIONS.indexOf(selectedMonth);
     const canGoPrev = currentMonthIdx > 0;
     const canGoNext = currentMonthIdx < MONTH_OPTIONS.length - 1;
-    const handlePrevMonth = () => canGoPrev && setSelectedMonth(MONTH_OPTIONS[currentMonthIdx - 1]);
-    const handleNextMonth = () => canGoNext && setSelectedMonth(MONTH_OPTIONS[currentMonthIdx + 1]);
+
+    const handlePrevMonth = () => {
+        if (canGoPrev) {
+            const m = MONTH_OPTIONS[currentMonthIdx - 1];
+            setSelectedDay(null);
+            dispatch(setSelectedMonth(m));
+            dispatch(fetchAttendanceData(m));
+        }
+    };
+    const handleNextMonth = () => {
+        if (canGoNext) {
+            const m = MONTH_OPTIONS[currentMonthIdx + 1];
+            setSelectedDay(null);
+            dispatch(setSelectedMonth(m));
+            dispatch(fetchAttendanceData(m));
+        }
+    };
 
     useEffect(() => {
-        setSelectedDay(null);
-        const fetchAll = async () => {
-            setLoading(true);
-            try {
-                const [recordsRes, summaryRes] = await Promise.all([
-                    getAttendanceRecords(selectedMonth),
-                    getAttendanceSummary(selectedMonth),
-                ]);
-                setRecords(recordsRes.data);
-                setSummary(summaryRes.data);
-            } catch (err) {
-                console.error("Failed to load attendance data:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAll();
-    }, [selectedMonth]);
+        dispatch(setSelectedMonth(DEFAULT_MONTH));
+        dispatch(fetchAttendanceData(DEFAULT_MONTH));
+    }, [dispatch]);
 
     const dayStatuses: Record<number, AttendanceStatus> = {};
     const recordsByDay: Record<number, AttendanceRecord> = {};
@@ -101,10 +92,10 @@ const AttendancePage = ({ user, onLogout, onNavigate }: Props) => {
 
     return (
         <div className="app-layout">
-            <Sidebar role={user.role} activePage="attendance" onNavigate={onNavigate} />
+            <Sidebar />
 
             <div className="main-area">
-                <Header user={user} onLogout={onLogout} title="My Attendance" />
+                <Header title="My Attendance" />
 
                 <div className="page-content">
                     <div className="dash-title-row">

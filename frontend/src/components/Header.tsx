@@ -1,14 +1,10 @@
 import "../style/header.css";
-import { type User } from "../constants";
+import { useAuth } from "../context/AuthContext";
 
-type Props = {
-    user: User;
-    onLogout: () => void;
-    title?: string;
-};
+const Header = ({ title }: { title?: string }) => {
+    const { user, handleLogout } = useAuth();
 
-const Header = ({ user, onLogout, title }: Props) => {
-    const initials = user.username
+    const initials = user!.username
         .split(" ")
         .map((n) => n[0])
         .join("")
@@ -20,8 +16,8 @@ const Header = ({ user, onLogout, title }: Props) => {
             {title && <h1 className="header-title">{title}</h1>}
             <div className="header-user">
                 <div className="user-avatar">{initials}</div>
-                <span className="user-name">{user.username}</span>
-                <button className="user-menu-btn" onClick={onLogout} title="Sign out">
+                <span className="user-name">{user!.username}</span>
+                <button className="user-menu-btn" onClick={handleLogout} title="Sign out">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
